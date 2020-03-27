@@ -1,0 +1,6 @@
+Zombie:
+  Flag: true
+  ZombieInteractBlockGoal:
+    - STONE
+  ZombiePlaceBlockGoal:
+    - STONE
