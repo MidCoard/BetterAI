@@ -56,7 +56,7 @@ public class ZombieBlockGoal extends ZombieInteractBlockGoal {
             for (Player player:world.getEntitiesByClass(Player.class)) {
                 PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.BLOCK_BREAK_ANIMATION);
                 packet.getIntegers().write(0,this.zombie.getID()).write(1,breakSit);
-                packet.getBlockPositionModifier().write(0,new BlockPosition(this.block.getLocation().toVector().subtract(player.getLocation().toVector())));
+                packet.getBlockPositionModifier().write(0,new BlockPosition(this.block.getLocation().toVector()));
                 if (this.block.getLocation().distanceSquared(player.getLocation()) < 1024D) {
                     try {
                         ProtocolLibrary.getProtocolManager().sendServerPacket(player,packet);
@@ -70,7 +70,7 @@ public class ZombieBlockGoal extends ZombieInteractBlockGoal {
     @Override
     public void tick() {
         super.tick();
-        this.breakTime ++;
+        this.breakTime++;
         int breakSit = (int)(this.breakTime / 3.0F);
         if (breakSit != this.breakSit) {
             this.sendBreakAnimationPacket(breakSit);
@@ -91,12 +91,11 @@ public class ZombieBlockGoal extends ZombieInteractBlockGoal {
                 start();
                 return;
             }
-            System.out.println("fuck");
-            this.block.setType(Material.AIR);
             Zombie z = (Zombie)this.zombie.getBukkitEntity();
             for (ItemStack itemStack : this.block.getDrops())
                 z.getWorld().dropItem(new Location(z.getWorld(), this.block.getX(), this.block.getY(),
                         this.block.getZ()), itemStack);
+            this.block.setType(Material.AIR);
         }
     }
 }

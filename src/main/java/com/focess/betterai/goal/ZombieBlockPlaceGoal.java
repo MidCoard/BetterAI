@@ -10,13 +10,25 @@ import org.bukkit.EntityEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.conversations.StringPrompt;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.block.BlockCanBuildEvent;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import sun.plugin2.message.Conversation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ZombieBlockPlaceGoal extends Goal {
+
 
     private final FocessEntity zombie;
 
@@ -27,50 +39,76 @@ public class ZombieBlockPlaceGoal extends Goal {
 
     @Override
     public boolean canStart() {
-        return !zombie.getNavigationManager().isIdle() && ((LivingEntity) zombie.getBukkitEntity()).getEquipment() != null && BetterAIConfiguration.getZombiePlaceBlockGoalMaterials().contains(((LivingEntity) zombie.getBukkitEntity()).getEquipment().getItemInHand().getType()) && ((LivingEntity) zombie.getBukkitEntity()).getEquipment().getItemInHand().getType().isBlock() && ((LivingEntity) zombie.getBukkitEntity()).getEquipment().getItemInHand().getAmount() > 0;
+        return ((Creature) zombie.getBukkitEntity()).getTarget() != null &&
+                ((LivingEntity) zombie.getBukkitEntity()).getEquipment() != null &&
+                BetterAIConfiguration.getZombiePlaceBlockGoalMaterials().contains(((LivingEntity) zombie.getBukkitEntity()).getEquipment().getItemInHand().getType()) &&
+                ((LivingEntity) zombie.getBukkitEntity()).getEquipment().getItemInHand().getType().isBlock() &&
+                ((LivingEntity) zombie.getBukkitEntity()).getEquipment().getItemInHand().getAmount() > 0;
     }
 
     @Override
     public void start() {
         Material material = ((LivingEntity) zombie.getBukkitEntity()).getEquipment().getItemInHand().getType();
-        Block block = ((LivingEntity) zombie.getBukkitEntity()).getTargetBlock(null, 3);
-        BlockCanBuildEvent blockCanBuildEvent;
-        if (NMSManager.getVersionInt() < 13) {
-            try {
-                blockCanBuildEvent =
-                        BlockCanBuildEvent.class.getConstructor(Block.class, int.class, boolean.class).newInstance(block, material.getId(), true);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+        Location zombieLocation = zombie.getBukkitEntity().getLocation().clone();
+        LivingEntity livingEntity = ((Creature)this.zombie.getBukkitEntity()).getTarget();
+        Location entityLocation = livingEntity.getLocation();
+            if (entityLocation.getBlockY() > zombieLocation.getBlockY()) {
+                Location l = zombieLocation.clone().add(0,2,0);
+                if (l.getBlock().getType().equals(Material.AIR)) {
+                    Location teleportLocation = zombieLocation.clone().add(0,1,0);
+                    zombieLocation.setY((zombieLocation.getBlockY() + 1));
+                    zombieLocation.getBlock().setType(material);
+                    zombie.getBukkitEntity().teleport(teleportLocation);
+                    havePlaced();
+                }
+            } else if (entityLocation.getBlockY() == zombieLocation.getBlockY()) {
+                if (entityLocation.getBlockX() > zombieLocation.getBlockX()) {
+                    Location loc = zombieLocation.clone();
+                    loc.setY((loc.getBlockY() - 1));
+                    loc.setX((loc.getBlockX() + 1));
+                    if (loc.getBlock().getType().equals(Material.AIR)) {
+                        loc.getBlock().setType(material);
+                        havePlaced();
+                    }
+                } else if (entityLocation.getBlockX() < zombieLocation.getBlockX()) {
+                    Location loc = zombieLocation.clone();
+                    loc.setY((loc.getBlockY() - 1));
+                    loc.setX((loc.getBlockX() - 1));
+                    if (loc.getBlock().getType().equals(Material.AIR)) {
+                        loc.getBlock().setType(material);
+                        havePlaced();
+                    }
+                } else if (entityLocation.getBlockZ() > zombieLocation.getBlockZ()) {
+                    Location loc = zombieLocation.clone();
+                    loc.setY((loc.getBlockY() - 1));
+                    loc.setX((loc.getBlockZ() + 1));
+                    if (loc.getBlock().getType().equals(Material.AIR)) {
+                        loc.getBlock().setType(material);
+                        havePlaced();
+                    }
+                } else if (entityLocation.getBlockZ() < zombieLocation.getBlockZ()) {
+                    Location loc = zombieLocation.clone();
+                    loc.setY((loc.getBlockY() - 1));
+                    loc.setX((loc.getBlockZ() - 1));
+                    if (loc.getBlock().getType().equals(Material.AIR)) {
+                        loc.getBlock().setType(material);
+                        havePlaced();
+                    }
+                }
             }
-        } else
-            blockCanBuildEvent =
-                    new BlockCanBuildEvent(block,
-                            Bukkit.createBlockData(material), true);
-        Bukkit.getServer().getPluginManager().callEvent(blockCanBuildEvent);
-        if (blockCanBuildEvent.isBuildable()) {
-            block.setType(material);
-            havePlaced();
-        }
-        else {
-            Location location = this.zombie.getBukkitEntity().getLocation().clone();
-            if (location.clone().add(0, 2, 0).getBlock().getType().equals(Material.AIR)) {
-                location.clone().getBlock().setType(material);
-                this.zombie.getBukkitEntity().teleport(location.clone().add(0, 1, 0));
-                havePlaced();
-            }
-        }
+
     }
 
     private void havePlaced() {
-        EntityEquipment entityEquipment = ((LivingEntity) zombie.getBukkitEntity()).getEquipment();
-        if ( entityEquipment != null && ! entityEquipment.getItemInHand().getType().equals(Material.AIR)) {
-            ItemStack itemStack =  entityEquipment.getItemInMainHand().clone();
-            if (itemStack.getAmount() <= 1) {
-                itemStack.setAmount(0);
-                itemStack.setType(Material.AIR);
-            }
-            else itemStack.setAmount(itemStack.getAmount() - 1);
-            entityEquipment.setItemInMainHand(itemStack);
+        EntityEquipment equipment = ((LivingEntity)zombie.getBukkitEntity()).getEquipment();
+        if (equipment.getItemInHand().getAmount() == 1) {
+            equipment.setItemInHand(new ItemStack(Material.AIR));
+        } else {
+            ItemStack itemStack = equipment.getItemInHand().clone();
+            itemStack.setAmount(equipment.getItemInHand().getAmount() - 1);
+            equipment.setItemInHand(itemStack);
         }
     }
+
+
 }

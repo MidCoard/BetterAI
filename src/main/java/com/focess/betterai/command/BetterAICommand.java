@@ -2,18 +2,14 @@ package com.focess.betterai.command;
 
 
 import com.focess.betterai.util.command.Command;
-import com.focess.betterai.util.command.CommandExecutor;
 import com.focess.betterai.util.command.PlayerCommandExecutor;
 import com.focess.pathfinder.entity.EntityManager;
 import com.focess.pathfinder.entity.FocessEntity;
 import com.focess.pathfinder.goal.WrappedGoal;
-import com.google.common.base.Enums;
 import com.google.common.collect.Lists;
-import com.sun.tracing.dtrace.ArgsAttributes;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 

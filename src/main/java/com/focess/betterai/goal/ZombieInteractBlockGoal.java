@@ -6,6 +6,7 @@ import com.focess.pathfinder.entity.FocessEntity;
 import com.focess.pathfinder.goal.Goal;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Zombie;
@@ -29,10 +30,11 @@ public abstract class ZombieInteractBlockGoal extends Goal {
         Block last = null;
         while (i.hasNext()) {
             Block temp = i.next();
-            if (!temp.getType().equals(Material.AIR))
+            if (!temp.getType().equals(Material.AIR)) {
                 last = temp;
+                break;
+            }
         }
-        System.out.println(last);
         if (last != null) {
             this.block = last;
             return true;
