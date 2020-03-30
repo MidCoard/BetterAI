@@ -24,9 +24,6 @@ public class ZombieBlockGoal extends ZombieInteractBlockGoal {
 
     public ZombieBlockGoal(Zombie zombie) {
         super(zombie);
-        this.addControl(Control.LOOK);
-        this.addControl(Control.MOVE);
-        this.addControl(Control.JUMP);
     }
 
     @Override

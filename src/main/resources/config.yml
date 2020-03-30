@@ -2,5 +2,9 @@ Zombie:
   Flag: true
   ZombieInteractBlockGoal:
     - STONE
+    - COBBLESTONE
+    - DIRT
   ZombiePlaceBlockGoal:
     - STONE
+    - COBBLESTONE
+    - DIRT

@@ -1,16 +1,15 @@
 package com.focess.betterai.goal;
 
-import com.focess.betterai.util.BetterAIConfiguration;
 import com.focess.pathfinder.entity.EntityManager;
 import com.focess.pathfinder.entity.FocessEntity;
 import com.focess.pathfinder.goal.Goal;
-import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Zombie;
 import org.bukkit.util.BlockIterator;
+import org.bukkit.util.Vector;
 
 public abstract class ZombieInteractBlockGoal extends Goal {
     protected final FocessEntity zombie;
@@ -25,18 +24,22 @@ public abstract class ZombieInteractBlockGoal extends Goal {
 
     @Override
     public boolean canStart() {
-        BlockIterator
-            i = new BlockIterator((LivingEntity) this.zombie.getBukkitEntity(), 4);
-        Block last = null;
-        while (i.hasNext()) {
-            Block temp = i.next();
-            if (!temp.getType().equals(Material.AIR)) {
-                last = temp;
+        LivingEntity target = ((Creature)this.zombie.getBukkitEntity()).getTarget();
+        if (target == null)
+            return false;
+        Vector vector =
+                target.getLocation().clone().subtract(((Creature)this.zombie.getBukkitEntity()).getEyeLocation().clone()).getDirection();
+        BlockIterator iterator = new BlockIterator(this.zombie.getBukkitEntity().getWorld(),
+                ((Creature)this.zombie.getBukkitEntity()).getEyeLocation().toVector(),vector,5,5);
+        Block now = null;
+        while (iterator.hasNext()){
+            now = iterator.next();
+            if (!now.getType().equals(Material.AIR))
                 break;
-            }
         }
-        if (last != null) {
-            this.block = last;
+        if (now != null && !now.getType().equals(Material.AIR)) {
+            this.zombie.getBukkitEntity().setVelocity(vector);
+            this.block = now;
             return true;
         }
         return false;
@@ -62,4 +65,6 @@ public abstract class ZombieInteractBlockGoal extends Goal {
         if (f3 < 0.0F)
             this.isStop = true;
     }
+
+
 }
