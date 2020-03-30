@@ -1,10 +1,13 @@
 Zombie:
   Flag: true
+#设置是否打开僵尸AI
   ZombieInteractBlockGoal:
     - STONE
     - COBBLESTONE
     - DIRT
+#设置可破坏方块
   ZombiePlaceBlockGoal:
     - STONE
     - COBBLESTONE
     - DIRT
+#设置可放置方块
