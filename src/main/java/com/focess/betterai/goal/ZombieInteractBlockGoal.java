@@ -30,7 +30,7 @@ public abstract class ZombieInteractBlockGoal extends Goal {
         Vector vector =
                 target.getLocation().clone().subtract(((Creature)this.zombie.getBukkitEntity()).getEyeLocation().clone()).getDirection();
         BlockIterator iterator = new BlockIterator(this.zombie.getBukkitEntity().getWorld(),
-                ((Creature)this.zombie.getBukkitEntity()).getEyeLocation().toVector(),vector,5,5);
+                ((Creature)this.zombie.getBukkitEntity()).getEyeLocation().toVector(),vector,4,4);
         Block now = null;
         while (iterator.hasNext()){
             now = iterator.next();

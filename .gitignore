@@ -1,4 +1,4 @@
-/libs
-/.idea
+/libs/
+/.idea/
 /BetterAI.iml
-/target
+/target/
