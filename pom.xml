@@ -6,7 +6,7 @@
 
     <groupId>BetterAI</groupId>
     <artifactId>BetterAI</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <dependencies>
         <dependency>
             <groupId>BukkitAPI_SpigotAPI_NMS</groupId>
