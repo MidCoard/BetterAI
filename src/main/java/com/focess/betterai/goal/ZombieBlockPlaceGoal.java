@@ -71,7 +71,7 @@ public class ZombieBlockPlaceGoal extends Goal {
                 } else if (entityLocation.getBlockZ() > zombieLocation.getBlockZ()) {
                     Location loc = zombieLocation.clone();
                     loc.setY((loc.getBlockY() - 1));
-                    loc.setX((loc.getBlockZ() + 1));
+                    loc.setZ((loc.getBlockZ() + 1));
                     if (loc.getBlock().getType().equals(Material.AIR)) {
                         loc.getBlock().setType(material);
                         havePlaced();
@@ -79,7 +79,7 @@ public class ZombieBlockPlaceGoal extends Goal {
                 } else if (entityLocation.getBlockZ() < zombieLocation.getBlockZ()) {
                     Location loc = zombieLocation.clone();
                     loc.setY((loc.getBlockY() - 1));
-                    loc.setX((loc.getBlockZ() - 1));
+                    loc.setZ((loc.getBlockZ() - 1));
                     if (loc.getBlock().getType().equals(Material.AIR)) {
                         loc.getBlock().setType(material);
                         havePlaced();

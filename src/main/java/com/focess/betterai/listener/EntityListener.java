@@ -42,8 +42,8 @@ public class EntityListener implements Listener {
             goalSelector.addGoal(new FocessGoalItem(new ZombieBlockGoal((Zombie) event.getEntity())).build(1,false));
             goalSelector.addGoal(new FocessGoalItem(new ZombieBlockPlaceGoal((Zombie) event.getEntity())).build(1,
                     false));
-//            goalSelector.addGoal(new FocessGoalItem(new ZombieAttackPlayerGoal((Zombie)event.getEntity())).build(2,
-//                    false));
+            goalSelector.addGoal(new FocessGoalItem(new ZombieAttackPlayerGoal((Zombie)event.getEntity())).build(0,
+                    false));
         }
     }
 }
