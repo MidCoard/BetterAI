@@ -1,16 +1,16 @@
 package com.focess.betterai.goal;
 
+import com.focess.pathfinder.core.entity.NMSFocessEntity;
 import com.focess.pathfinder.entity.EntityManager;
-import com.focess.pathfinder.entity.FocessEntity;
 import com.focess.pathfinder.goal.Goal;
 import org.bukkit.GameMode;
 import org.bukkit.entity.*;
 
 public class ZombieAttackPlayerGoal extends Goal {
 
-    private final FocessEntity zombie;
+    private final NMSFocessEntity zombie;
 
-    private static final int TIMEOUT = 30;
+private static final int TIMEOUT = 30;
 
     private Entity target = null;
     private int time = 0;
@@ -46,6 +46,9 @@ public class ZombieAttackPlayerGoal extends Goal {
         ((Creature)this.zombie.getBukkitEntity()).setTarget((LivingEntity) this.target);
     }
 
+    /**
+     * 寻找进攻目标
+     */
     private void searchTarget() {
         this.zombie.getBukkitEntity().getNearbyEntities(20,20,20).stream().filter(ZombieAttackPlayerGoal::isPlayer).sorted((i, j)->{
             double distance1 = this.zombie.getBukkitEntity().getLocation().distance(i.getLocation());
@@ -54,6 +57,11 @@ public class ZombieAttackPlayerGoal extends Goal {
         }).findFirst().ifPresent((entity)->target = entity);
     }
 
+    /**
+     * 判断是否为玩家
+     * @param entity
+     * @return
+     */
     private static boolean isPlayer(Entity entity) {
         if (!entity.getType().equals(EntityType.PLAYER))
             return false;

@@ -1,4 +1,4 @@
-package com.focess.betterai.util.command;
+package com.focess.betterai.api.command;
 
 import com.focess.betterai.BetterAI;
 import com.google.common.collect.Lists;
@@ -39,10 +39,17 @@ public abstract class Command extends org.bukkit.command.Command {
     public static void register(final Command command) {
         command.registered = true;
         Command.commands.add(command);
+        command.init();
     }
 
     public static void unregister(final Command command) {
         command.unregister();
+    }
+    
+    public static void unregisterAllCommand() {
+    	for(Command com:commands) {
+    		com.unregister();
+    	}
     }
 
     public final void addExecutor(final int count, final CommandExecutor executor, final String... subCommands) {

@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
+import com.focess.betterai.utils.PacketUtil;
 import com.focess.pathfinder.core.util.NMSManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -45,32 +46,15 @@ public class ZombieBlockGoal extends ZombieInteractBlockGoal {
     @Override
     public void stop() {
         super.stop();
-        sendBreakAnimationPacket(-1);
+        PacketUtil.sendBreakAnimationPacket(this.zombie.getID(),this.block,-1);
     }
-
-    private void sendBreakAnimationPacket(int breakSit) {
-        for (World world:Bukkit.getWorlds())
-            for (Player player:world.getEntitiesByClass(Player.class)) {
-                PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.BLOCK_BREAK_ANIMATION);
-                packet.getIntegers().write(0,this.zombie.getID()).write(1,breakSit);
-                packet.getBlockPositionModifier().write(0,new BlockPosition(this.block.getLocation().toVector()));
-                if (this.block.getLocation().distanceSquared(player.getLocation()) < 1024D) {
-                    try {
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(player,packet);
-                    } catch (InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-    }
-
     @Override
     public void tick() {
         super.tick();
         this.breakTime++;
         int breakSit = (int)(this.breakTime / 3.0F);
         if (breakSit != this.breakSit) {
-            this.sendBreakAnimationPacket(breakSit);
+        	PacketUtil.sendBreakAnimationPacket(this.zombie.getID(),this.block,breakSit);
             this.breakSit = breakSit;
         }
         if (this.breakTime == 30) {

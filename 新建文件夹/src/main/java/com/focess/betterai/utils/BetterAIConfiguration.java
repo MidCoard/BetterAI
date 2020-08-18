@@ -1,4 +1,4 @@
-package com.focess.betterai.util;
+package com.focess.betterai.utils;
 
 import com.focess.betterai.BetterAI;
 import com.google.common.collect.Sets;

@@ -1,8 +1,8 @@
 package com.focess.betterai.goal;
 
-import com.focess.betterai.util.BetterAIConfiguration;
+import com.focess.betterai.utils.BetterAIConfiguration;
+import com.focess.pathfinder.core.entity.NMSFocessEntity;
 import com.focess.pathfinder.entity.EntityManager;
-import com.focess.pathfinder.entity.FocessEntity;
 import com.focess.pathfinder.goal.Goal;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
 public class ZombieBlockPlaceGoal extends Goal {
 
 
-    private final FocessEntity zombie;
+    private final NMSFocessEntity zombie;
 
     public ZombieBlockPlaceGoal(Zombie zombie) {
         this.zombie = EntityManager.getFocessEntity(zombie);

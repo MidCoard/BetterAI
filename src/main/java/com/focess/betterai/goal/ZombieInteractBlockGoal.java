@@ -1,7 +1,7 @@
 package com.focess.betterai.goal;
 
+import com.focess.pathfinder.core.entity.NMSFocessEntity;
 import com.focess.pathfinder.entity.EntityManager;
-import com.focess.pathfinder.entity.FocessEntity;
 import com.focess.pathfinder.goal.Goal;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -12,7 +12,7 @@ import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 public abstract class ZombieInteractBlockGoal extends Goal {
-    protected final FocessEntity zombie;
+    protected final NMSFocessEntity zombie;
     protected Block block;
     private boolean isStop;
     private float x;

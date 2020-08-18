@@ -1,9 +1,10 @@
 package com.focess.betterai;
 
+import com.focess.betterai.api.command.Command;
 import com.focess.betterai.command.BetterAICommand;
 import com.focess.betterai.listener.EntityListener;
-import com.focess.betterai.util.BetterAIConfiguration;
-import com.focess.betterai.util.command.Command;
+import com.focess.betterai.utils.BetterAIConfiguration;
+
 import org.bukkit.entity.Animals;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -20,10 +21,15 @@ public class BetterAI extends JavaPlugin {
 
     public void onEnable(){
         instance = this;
-        loadConfig();
+        
+        loadConfig();//加载配置文件
         BetterAIConfiguration.loadDefault(this);
+        
         this.getServer().getPluginManager().registerEvents(new EntityListener(),this);
+        //注册事件
+        
         Command.register(new BetterAICommand());
+        //注册指令
     }
 
     private void loadConfig() {
@@ -36,6 +42,6 @@ public class BetterAI extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
+    	Command.unregisterAllCommand();
     }
 }
