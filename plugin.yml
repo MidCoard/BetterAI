@@ -1,0 +1,6 @@
+name: BetterAI
+main: com.focess.betterai.BetterAI
+version: 1.1
+api-version: 1.13
+depend: [PathfinderAPI,ProtocolLib,ToolAPI]
+author: MidCoard
