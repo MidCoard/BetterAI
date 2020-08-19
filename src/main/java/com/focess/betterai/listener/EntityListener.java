@@ -7,11 +7,17 @@ import com.focess.betterai.utils.BetterAIConfiguration;
 import com.focess.pathfinder.core.entity.NMSFocessEntity;
 import com.focess.pathfinder.entity.EntityManager;
 import com.focess.pathfinder.goal.FocessGoalItem;
+import com.focess.pathfinder.goal.GoalItem;
 import com.focess.pathfinder.goal.GoalSelector;
 import com.focess.pathfinder.goal.WrappedGoal;
 import com.focess.pathfinder.goals.Goals;
 import com.focess.pathfinder.wrapped.WrappedEntityCreature;
 import com.focess.pathfinder.wrapped.WrappedEntityInsentient;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
@@ -29,6 +35,14 @@ public class EntityListener implements Listener {
             event.getEntity().setCanPickupItems(true);
             NMSFocessEntity entity = EntityManager.getFocessEntity(event.getEntity());
             GoalSelector goalSelector = entity.getGoalSelector();
+            Set<GoalItem> items= goalSelector.getGoalItems();
+            List<GoalItem> goals=new ArrayList<>();
+            for(GoalItem item:items) {
+            	goals.add(item);
+            }
+            for(GoalItem goal:goals) {
+            	goalSelector.removeGoal(goal);
+            }
 //            for (WrappedGoal wrappedGoal:goalSelector.getGoals())
 //                if (wrappedGoal.getPriority() == 2 && wrappedGoal.getGoalItems().contains(Goals.TARGET.NEAREST_ATTACKABLE_TARGET))
 //                    goalSelector.removeExactGoal(wrappedGoal);
@@ -39,8 +53,8 @@ public class EntityListener implements Listener {
                         .build(0, false));
             
             //躲避太阳
-            goalSelector.addGoal(Goals.MOVE.FLEE_SUN.clear().writeEntityCreature(WrappedEntityCreature.getWrappedEntityCreature((Creature) event.getEntity())).writeDouble(1.0).build(3, false));
-            goalSelector.addGoal(Goals.RESTRICT_SUN.clear().writeEntityCreature(WrappedEntityCreature.getWrappedEntityCreature((Creature) event.getEntity())).build(2, false));
+            //goalSelector.addGoal(Goals.MOVE.FLEE_SUN.clear().writeEntityCreature(WrappedEntityCreature.getWrappedEntityCreature((Creature) event.getEntity())).writeDouble(1.0).build(3, false));
+            //goalSelector.addGoal(Goals.RESTRICT_SUN.clear().writeEntityCreature(WrappedEntityCreature.getWrappedEntityCreature((Creature) event.getEntity())).build(2, false));
             
             //破坏方块
             //goalSelector.addGoal(new FocessGoalItem(new ZombieBlockGoal((Zombie) event.getEntity())).build(1,false));

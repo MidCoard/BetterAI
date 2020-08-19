@@ -60,6 +60,7 @@ public class BetterAICommand extends Command {
         this.addExecutor(1,(PlayerCommandExecutor)(sender,args)->{
         	int id=Integer.parseInt(args[0]);
         	AIZombie aiZombie=ZombieManager.INSTANCE.getZombieByEntityID(id);
+        	aiZombie.getBukkitEntity().setVelocity(new Vector(0.1,0,0.1));
         	aiZombie.getZombieNavigation().gotoPathPoint(new FocessPathPoint(0,sender.getLocation()));
         	sender.sendMessage("id:"+aiZombie.getEntityID());
         },"move");//移动僵尸 bai move ID

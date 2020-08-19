@@ -63,4 +63,15 @@ public class AIZombie implements IBasicFocessEntity{
 		this.findPlayerRange = findPlayerRange;
 	}
 	
+	public boolean equals(Object ano) {
+		if(ano==null||!(ano instanceof AIZombie))return false;
+		AIZombie ai=(AIZombie)ano;
+		if(ai.getBukkitEntity()==null) {
+			if(this.getBukkitEntity()==null)return true;
+			else return false;
+		}
+		if(ai.getBukkitEntity().equals(this.getBukkitEntity()))return true;
+		return false;
+	}
+	
 }

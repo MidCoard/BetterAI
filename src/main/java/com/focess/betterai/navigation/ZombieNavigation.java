@@ -19,6 +19,9 @@ import com.focess.pathfinder.core.navigation.focess.FocessNavigation;
 import com.focess.pathfinder.core.navigation.focess.FocessPathPoint;
 import com.focess.pathfinder.navigation.BasicPath;
 import com.focess.pathfinder.navigation.PathPoint;
+import com.toolapi.handler.Handler;
+import com.toolapi.handler.HandlerManager;
+import com.toolapi.utils.MathUtil;
 import com.toolapi.utils.TestUtil;
 
 import pers.blockdurability.data.DurabilityManager;
@@ -54,8 +57,34 @@ public class ZombieNavigation extends FocessNavigation{
 		Location loc=getBlockLocation();
 		Location pLoc=pathPoint.getLocation();
 		Zombie zombie=aiZombie.getBukkitEntity();
-		if(Math.abs(loc.getY()-pLoc.getY())<1) {
-			zombie.getPathfinder().moveTo(pathPoint.getLocation());
+		if(Math.abs(loc.getY()-pLoc.getY())<1) {//y坐标相同
+			Location newLoc = null;
+			Location blockLoc;
+			int ran=MathUtil.getRandomNumber(1, 2);
+			if(loc.getBlockX()==pLoc.getBlockX()&&loc.getBlockZ()!=pLoc.getBlockZ()) {
+				ran=1;
+			}else if(loc.getBlockZ()==pLoc.getBlockZ()&&loc.getBlockX()!=pLoc.getBlockX()) {
+				ran=2;
+			}
+			if(ran==1) {
+				newLoc=new Location(loc.getWorld(),loc.getBlockX(),loc.getBlockY(),
+						loc.getBlockZ()<pLoc.getBlockZ()?loc.getBlockZ()+1:loc.getBlockZ()-1);
+			}else {
+				newLoc=new Location(loc.getWorld(),
+						loc.getBlockX()<pLoc.getBlockX()?loc.getBlockX()+1:loc.getBlockX()-1
+								,loc.getBlockY(),loc.getBlockZ());
+			}
+			
+			blockLoc=newLoc.clone();
+			blockLoc.setY(blockLoc.getY()-1);
+			blockLoc.getBlock().setType(Material.STONE);
+			
+			zombie.getPathfinder().moveTo(newLoc);
+			
+			
+			
+			
+			
 		}else {//y坐标不同
 			//System.out.println("else");
 			if(loc.getY()>pLoc.getY()) {//向下走
@@ -64,11 +93,19 @@ public class ZombieNavigation extends FocessNavigation{
 				dur++;
 				if(dur==10){
 					unBlock.setType(Material.AIR);
+					this.aiZombie.getBukkitEntity().teleport(unBlock.getLocation());
 					DurabilityManager.INSTANCE.setBlockDurability(unBlock, -1);
 				}else
 				DurabilityManager.INSTANCE.setBlockDurability(unBlock, dur);
-			}else if(loc.getY()<pLoc.getY()) {//向上走
-				zombie.setVelocity(new Vector(0,1,0));
+			}else if(loc.getY()+0.8<pLoc.getY()) {//向上走
+				zombie.setVelocity(new Vector(0,0.2,0));
+				HandlerManager.INSTANCE.addHanlder(new Handler(){
+					@Override
+					public void handle() throws Exception {
+						//System.out.println("STONE");
+						loc.getBlock().setType(Material.STONE);
+					}
+				});
 			}
 			//DurabilityManager.INSTANCE.setBlockDurability(block, dur);
 		}
@@ -102,25 +139,36 @@ public class ZombieNavigation extends FocessNavigation{
 
 	@Override
 	public void recalculatePath() {
-		BasicPath path=this.getCurrentPath();
+		ZombiePath path=this.getCurrentPath();
 		List<FocessPathPoint> points=path.getPathPoints();
 		points.clear();
 		Player player=ZombieUtil.findPlayer(aiZombie);
 		if(player==null)return;
 		Location pLoc=player.getLocation();
-		points.add(new FocessPathPoint(1,pLoc));//编号为1
+		points.add(new PlayerPathPoint(player,1,pLoc));//编号为1
 	}
 
 
 	@Override
 	public void timer() {
+		if(!this.aiZombie.isAlive()) {
+			NavigationManager.INSTANCE.unregisterFocessNavigation(this);
+			return;
+		}
 		FocessPathPoint point=this.getCurrentPath().getNowPathPoint();
-		if(point!=null) {
-			TestUtil.test("id:"+aiZombie.getEntityID()+",GO:"+point.getLocation());
-		}else {
-			TestUtil.test("id:"+aiZombie.getEntityID()+",GO:null");
+		if(point==null){//无对象
+			//TODO 一段时间后移除
 		}
 		this.gotoPathPoint(point);
+	}
+
+
+	@Override
+	public boolean equals(Object ano) {
+		if(ano==null||!(ano instanceof ZombieNavigation))return false;
+		ZombieNavigation zb=(ZombieNavigation)ano;
+		if(zb.getAIZombie().equals(this.getAIZombie()))return true;
+		return false;
 	}
 
 }

@@ -1,10 +1,14 @@
 package com.focess.betterai.utils;
 
+import java.util.List;
+
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
@@ -52,7 +56,23 @@ public class ZombieUtil {
 	 * @return
 	 */
 	public static Player findPlayer(AIZombie zombie) {
-		Player player=EntityUtil.getNearestPlayerInRange(zombie.getBukkitEntity(), range);
+		Entity entity=zombie.getBukkitEntity();
+		if(entity==null)return null;
+		Location eLoc=entity.getLocation();
+		List<Entity> entities=entity.getNearbyEntities(range, range, range);
+		double pDis=Double.MAX_VALUE;
+		Player player=null;
+		for(Entity en:entities) {
+			if(en instanceof Player) {
+				Player p=(Player)en;
+				if(p.getGameMode()!=GameMode.SURVIVAL)continue;
+				double tmpDis=en.getLocation().distance(eLoc);
+				if(tmpDis<pDis) {
+					player=p;
+					pDis=tmpDis;
+				}
+			}
+		}
 		return player;
 	}
 }
