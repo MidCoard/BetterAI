@@ -5,6 +5,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -17,6 +18,8 @@ import org.bukkit.potion.PotionEffectType;
 
 import com.focess.betterai.zombie.AIZombie;
 import com.toolapi.utils.EntityUtil;
+
+import pers.blockdurability.data.DurabilityManager;
 
 /**
  * 实体工具类
@@ -31,6 +34,14 @@ public class ZombieUtil {
 	public static void attackBlock(Block block) {
 		World world=block.getWorld();
 		world.playSound(block.getLocation(), Sound.BLOCK_STONE_HIT , 1, 1);
+		int dur=DurabilityManager.INSTANCE.getBlockDurability(block);
+		dur++;
+		if(dur==10){
+			block.setType(Material.AIR);
+			
+			DurabilityManager.INSTANCE.setBlockDurability(block, -1);
+		}else
+		DurabilityManager.INSTANCE.setBlockDurability(block, dur);
 	}
 	
 	/**
@@ -48,7 +59,7 @@ public class ZombieUtil {
 		return aiZombie;
 	}
 	
-	private static double range=10;//寻找范围
+	private static double range=50;//寻找范围
 	
 	/**
 	 * 给僵尸寻找目标

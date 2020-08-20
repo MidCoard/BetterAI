@@ -32,7 +32,7 @@ public class ZombiePath extends FocessPath{
 		PlayerPathPoint playerPoint=getNowPathPoint();
 		if(playerPoint==null)return false;
 		Location loc=playerPoint.getLocation();
-		if(WorldUtil.hasPlayerInDistance(loc, 5, playerPoint.getPlayerName()))return true;
+		if(WorldUtil.hasPlayerInDistance(loc, 1, playerPoint.getPlayerName()))return true;
 		return false;
 	}
 	

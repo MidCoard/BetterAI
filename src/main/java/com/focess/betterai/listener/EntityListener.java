@@ -11,6 +11,7 @@ import com.focess.pathfinder.goal.GoalItem;
 import com.focess.pathfinder.goal.GoalSelector;
 import com.focess.pathfinder.goal.WrappedGoal;
 import com.focess.pathfinder.goals.Goals;
+import com.focess.pathfinder.goals.ZombieAttackGoalItem;
 import com.focess.pathfinder.wrapped.WrappedEntityCreature;
 import com.focess.pathfinder.wrapped.WrappedEntityInsentient;
 
@@ -52,6 +53,10 @@ public class EntityListener implements Listener {
                         .writeEntityInsentient(WrappedEntityInsentient.getWrappedEntityInsentient((Mob) event.getEntity()))
                         .build(0, false));
             
+            /*
+            goalSelector.addGoal(Goals.NEAREST_ATTACKABLE_TARGET_INSENTIENT.clear()
+                    .writeEntityInsentient(WrappedEntityInsentient.getWrappedEntityInsentient((Mob) event.getEntity()))
+                    .build(0, false));*/
             //躲避太阳
             //goalSelector.addGoal(Goals.MOVE.FLEE_SUN.clear().writeEntityCreature(WrappedEntityCreature.getWrappedEntityCreature((Creature) event.getEntity())).writeDouble(1.0).build(3, false));
             //goalSelector.addGoal(Goals.RESTRICT_SUN.clear().writeEntityCreature(WrappedEntityCreature.getWrappedEntityCreature((Creature) event.getEntity())).build(2, false));

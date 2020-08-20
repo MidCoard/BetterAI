@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.util.Vector;
 
+import com.focess.betterai.BetterAI;
 import com.focess.betterai.utils.WorldUtil;
 import com.focess.betterai.utils.ZombieUtil;
 import com.focess.betterai.zombie.AIZombie;
@@ -21,6 +22,7 @@ import com.focess.pathfinder.navigation.BasicPath;
 import com.focess.pathfinder.navigation.PathPoint;
 import com.toolapi.handler.Handler;
 import com.toolapi.handler.HandlerManager;
+import com.toolapi.utils.BlockUtil;
 import com.toolapi.utils.MathUtil;
 import com.toolapi.utils.TestUtil;
 
@@ -37,6 +39,7 @@ public class ZombieNavigation extends FocessNavigation{
 	public ZombieNavigation(AIZombie aiZombie) {
 		this.aiZombie=aiZombie;
 		zombiePath=new ZombiePath(this);
+		BetterAI.registers.add(this);
 		NavigationManager.INSTANCE.registerFocessNavigation(this);
 	}
 	
@@ -54,10 +57,12 @@ public class ZombieNavigation extends FocessNavigation{
 	@Override
 	public void gotoPathPoint(FocessPathPoint pathPoint) {
 		if(pathPoint==null)return;
+
 		Location loc=getBlockLocation();
 		Location pLoc=pathPoint.getLocation();
 		Zombie zombie=aiZombie.getBukkitEntity();
 		if(Math.abs(loc.getY()-pLoc.getY())<1) {//y坐标相同
+			//System.out.println("go1");
 			Location newLoc = null;
 			Location blockLoc;
 			int ran=MathUtil.getRandomNumber(1, 2);
@@ -77,35 +82,41 @@ public class ZombieNavigation extends FocessNavigation{
 			
 			blockLoc=newLoc.clone();
 			blockLoc.setY(blockLoc.getY()-1);
-			blockLoc.getBlock().setType(Material.STONE);
+			if(blockLoc.getBlock().getType()==Material.AIR)
+				blockLoc.getBlock().setType(Material.STONE);
 			
-			zombie.getPathfinder().moveTo(newLoc);
-			
-			
-			
-			
-			
+			if(BlockUtil.getBlockByLocationWithDeltaY(blockLoc, 1).getType()!=Material.AIR) {//要走的位置上面有障碍物
+				Block tmpBlock=BlockUtil.getBlockByLocationWithDeltaY(blockLoc, 1);
+				ZombieUtil.attackBlock(tmpBlock);
+			}else if(BlockUtil.getBlockByLocationWithDeltaY(blockLoc, 2).getType()!=Material.AIR) {//要走的位置上面有障碍物
+				Block tmpBlock=BlockUtil.getBlockByLocationWithDeltaY(blockLoc, 2);
+				ZombieUtil.attackBlock(tmpBlock);
+			}else {
+				zombie.getPathfinder().moveTo(newLoc);
+			}
 		}else {//y坐标不同
 			//System.out.println("else");
 			if(loc.getY()>pLoc.getY()) {//向下走
+				//System.out.println("向下走");
 				Block unBlock=WorldUtil.getBlockUnderEntity(aiZombie.getBukkitEntity());
-				int dur=DurabilityManager.INSTANCE.getBlockDurability(unBlock);
-				dur++;
-				if(dur==10){
-					unBlock.setType(Material.AIR);
+				ZombieUtil.attackBlock(unBlock);
+				if(unBlock.getType()==Material.AIR)
 					this.aiZombie.getBukkitEntity().teleport(unBlock.getLocation());
-					DurabilityManager.INSTANCE.setBlockDurability(unBlock, -1);
-				}else
-				DurabilityManager.INSTANCE.setBlockDurability(unBlock, dur);
 			}else if(loc.getY()+0.8<pLoc.getY()) {//向上走
-				zombie.setVelocity(new Vector(0,0.2,0));
-				HandlerManager.INSTANCE.addHanlder(new Handler(){
-					@Override
-					public void handle() throws Exception {
-						//System.out.println("STONE");
-						loc.getBlock().setType(Material.STONE);
-					}
-				});
+				//System.out.println("向上走");
+				if(BlockUtil.getBlockByLocationWithDeltaY(loc, 2).getType()!=Material.AIR) {//有障碍物
+					Block tmpBlock=BlockUtil.getBlockByLocationWithDeltaY(loc, 2);
+					ZombieUtil.attackBlock(tmpBlock);
+				}else {
+					zombie.setVelocity(new Vector(0,0.2,0));
+					HandlerManager.INSTANCE.addHanlder(new Handler(){
+						@Override
+						public void handle() throws Exception {
+							//System.out.println("STONE");
+							loc.getBlock().setType(Material.STONE);
+						}
+					});
+				}
 			}
 			//DurabilityManager.INSTANCE.setBlockDurability(block, dur);
 		}
@@ -152,6 +163,7 @@ public class ZombieNavigation extends FocessNavigation{
 	@Override
 	public void timer() {
 		if(!this.aiZombie.isAlive()) {
+			BetterAI.registers.remove(this);
 			NavigationManager.INSTANCE.unregisterFocessNavigation(this);
 			return;
 		}
