@@ -1,4 +1,4 @@
-package com.focess.betterai.api.command;
+package com.focess.betterai.utils.command;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

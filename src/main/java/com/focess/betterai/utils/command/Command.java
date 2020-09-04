@@ -1,4 +1,4 @@
-package com.focess.betterai.api.command;
+package com.focess.betterai.utils.command;
 
 import com.focess.betterai.BetterAI;
 import com.google.common.collect.Lists;
@@ -15,12 +15,8 @@ import java.util.stream.Collectors;
 
 public abstract class Command extends org.bukkit.command.Command {
 
-    private final List<Executor> executors = Lists.newArrayList();
-    private boolean registered;
-
-    private static CommandMap commandMap;
-
     private static final List<Command> commands = Lists.newArrayList();
+    private static CommandMap commandMap;
 
     static {
         try {
@@ -28,6 +24,21 @@ public abstract class Command extends org.bukkit.command.Command {
         } catch (final Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private final List<Executor> executors = Lists.newArrayList();
+    private boolean registered;
+
+    public Command(final String name, final List<String> ali) {
+        this(name, ali, null);
+    }
+
+    public Command(final String name, final List<String> ali, final String permission) {
+        super(name, "", "", ali);
+        if (permission != null)
+            this.setPermission(permission);
+        this.init();
+        Command.commandMap.register(BetterAI.getInstance().getName(), this);
     }
 
     private static void getCommandMap() throws Exception {
@@ -45,27 +56,15 @@ public abstract class Command extends org.bukkit.command.Command {
     public static void unregister(final Command command) {
         command.unregister();
     }
-    
+
     public static void unregisterAllCommand() {
-    	for(Command com:commands) {
-    		com.unregister();
-    	}
+        for (Command com : commands) {
+            com.unregister();
+        }
     }
 
     public final void addExecutor(final int count, final CommandExecutor executor, final String... subCommands) {
         this.executors.add(new Executor(count, subCommands).addExecutor(executor));
-    }
-
-    public Command(final String name, final List<String> ali) {
-        this(name, ali, null);
-    }
-
-    public Command(final String name, final List<String> ali, final String permission) {
-        super(name, "", "", ali);
-        if (permission != null)
-            this.setPermission(permission);
-        this.init();
-        Command.commandMap.register(BetterAI.getInstance().getName(), this);
     }
 
     @Override
@@ -117,6 +116,8 @@ public abstract class Command extends org.bukkit.command.Command {
                     .collect(Collectors.toList());
     }
 
+    public abstract void usage(CommandSender commandSender);
+
     private static class Executor {
 
         private final int count;
@@ -152,6 +153,4 @@ public abstract class Command extends org.bukkit.command.Command {
             return this.subCommands.length;
         }
     }
-
-    public abstract void usage(CommandSender commandSender);
 }

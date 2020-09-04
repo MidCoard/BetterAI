@@ -10,23 +10,21 @@ import java.util.Set;
 
 public class BetterAIConfiguration {
 
+    private static final Set<Material> ZombiePlaceBlockGoalMaterials = Sets.newHashSet();
+    private static final Set<Material> ZombieInteractBlockGoalMaterials = Sets.newHashSet();
+    private static boolean enableZombie;
+
     public static Set<Material> getZombiePlaceBlockGoalMaterials() {
         return ZombiePlaceBlockGoalMaterials;
     }
-
-    private static Set<Material> ZombiePlaceBlockGoalMaterials = Sets.newHashSet();
 
     public static Set<Material> getZombieInteractBlockGoalMaterials() {
         return ZombieInteractBlockGoalMaterials;
     }
 
-    private static Set<Material> ZombieInteractBlockGoalMaterials = Sets.newHashSet();
-
     public static boolean isEnableZombie() {
         return enableZombie;
     }
-
-    private static boolean enableZombie;
 
     public static void loadDefault(BetterAI betterAI) {
         FileConfiguration configuration = betterAI.getConfig();
@@ -35,10 +33,10 @@ public class BetterAIConfiguration {
     }
 
     private static void buildZombie(ConfigurationSection zombie) {
-        enableZombie = zombie.getBoolean("Flag",true);
-        for (String material:zombie.getStringList("ZombieInteractBlockGoal"))
+        enableZombie = zombie.getBoolean("Flag", true);
+        for (String material : zombie.getStringList("ZombieInteractBlockGoal"))
             ZombieInteractBlockGoalMaterials.add(Material.getMaterial(material));
-        for (String material:zombie.getStringList("ZombiePlaceBlockGoal"))
+        for (String material : zombie.getStringList("ZombiePlaceBlockGoal"))
             ZombiePlaceBlockGoalMaterials.add(Material.getMaterial(material));
     }
 }
