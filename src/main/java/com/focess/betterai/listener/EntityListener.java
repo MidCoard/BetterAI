@@ -17,6 +17,7 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 public class EntityListener implements Listener {
@@ -53,6 +54,13 @@ public class EntityListener implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
+        for (Zombie zombie : event.getBlock().getLocation().getNearbyEntitiesByType(Zombie.class, 12, 12, 12)) {
+            FocessZombieNavigation navigation = (FocessZombieNavigation) EntityManager.getFocessEntity(zombie).getNavigationManager().getNavigation("FocessZombie");
+            navigation.markShouldRecalculatePath();
+        }
+    }
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event) {
         for (Zombie zombie : event.getBlock().getLocation().getNearbyEntitiesByType(Zombie.class, 12, 12, 12)) {
             FocessZombieNavigation navigation = (FocessZombieNavigation) EntityManager.getFocessEntity(zombie).getNavigationManager().getNavigation("FocessZombie");
             navigation.markShouldRecalculatePath();

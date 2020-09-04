@@ -134,7 +134,7 @@ public class FocessZombieNavigation extends FocessNavigation {
         this.getFocessEntity().getNavigationManager().stop();
         this.shouldRecalculatePath = false;
         Zombie zombie = (Zombie) this.getFocessEntity().getBukkitEntity();
-        if (zombie.getTarget() != null) {
+        if (zombie.getTarget() != null && zombie.getTarget().getLocation().distance(zombie.getLocation()) > 0.75) {
             LivingEntity entity = zombie.getTarget();
             Requests.addRequest(new Requests.Request() {
                 @Override

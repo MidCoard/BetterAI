@@ -1,5 +1,7 @@
 package com.focess.betterai.goal;
 
+import com.focess.betterai.navigation.FocessZombieNavigation;
+import com.focess.betterai.utils.BetterAIConfiguration;
 import com.focess.pathfinder.entity.EntityManager;
 import com.focess.pathfinder.entity.FocessEntity;
 import com.focess.pathfinder.goal.Goal;
@@ -7,9 +9,11 @@ import com.focess.pathfinder.goals.Goals;
 import com.google.common.collect.Lists;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -29,7 +33,16 @@ public class ZombieBlockPlaceGoal extends Goal {
 
     @Override
     public boolean canStart() {
-        return locations.size() != 0;
+        return locations.size() != 0 && checkMaterial();
+    }
+
+    private boolean checkMaterial() {
+        EntityEquipment equipment = ((Zombie)zombie.getBukkitEntity()).getEquipment();
+        if (equipment == null)
+            return false;
+        if (equipment.getItemInHand() == null || !equipment.getItemInHand().getType().isBlock())
+            return false;
+        return true;
     }
 
     @Override
@@ -45,6 +58,10 @@ public class ZombieBlockPlaceGoal extends Goal {
         locations.remove(0);
         location.getBlock().setType(material);
         havePlaced();
+        this.zombie.getBukkitEntity().teleport(location.clone().add(0,1,0));
+        for (FocessEntity entity:EntityManager.getAllFocessEntities())
+            if (entity.getBukkitEntity() instanceof Zombie && entity.getLocation().distance(location) < 20)
+                ((FocessZombieNavigation)entity.getNavigationManager().getNavigation("FocessZombie")).markShouldRecalculatePath();
     }
 
     private void havePlaced() {
