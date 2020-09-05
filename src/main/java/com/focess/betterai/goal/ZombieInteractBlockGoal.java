@@ -20,6 +20,8 @@ public abstract class ZombieInteractBlockGoal extends Goal {
 
     public ZombieInteractBlockGoal(Zombie zombie) {
         this.zombie = EntityManager.getFocessEntity(zombie);
+        this.addControl(Control.LOOK);
+        this.addControl(Control.MOVE);
     }
 
     public void addRequest(Location location) {

@@ -25,6 +25,7 @@ public class ZombieBlockPlaceGoal extends Goal {
 
     public ZombieBlockPlaceGoal(Zombie zombie) {
         this.zombie = EntityManager.getFocessEntity(zombie);
+        this.addControl(Control.LOOK);
     }
 
     public void addRequest(Location location) {
@@ -40,9 +41,7 @@ public class ZombieBlockPlaceGoal extends Goal {
         EntityEquipment equipment = ((Zombie)zombie.getBukkitEntity()).getEquipment();
         if (equipment == null)
             return false;
-        if (equipment.getItemInHand() == null || !equipment.getItemInHand().getType().isBlock())
-            return false;
-        return true;
+        return equipment.getItemInHand() != null && equipment.getItemInHand().getType().isBlock();
     }
 
     @Override

@@ -2,20 +2,16 @@ package com.focess.betterai.utils.command;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.omg.CORBA.DATA_CONVERSION;
 
 public interface PlayerCommandExecutor extends CommandExecutor {
 
     @Override
-    default void execute(final CommandSender sender, final String[] args) {
+    default CommandResult execute(final CommandSender sender, DataCollection dataCollection) {
         if (sender instanceof Player && sender.isOp())
-            this.execute((Player) sender, args);
-        else
-            this.executeError(sender, args);
+            return this.execute((Player) sender, dataCollection);
+        return CommandResult.REFUSE;
     }
 
-    void execute(Player player, String[] args);
-
-    default void executeError(final CommandSender sender, final String[] args) {
-    }
-
+    CommandResult execute(Player player, DataCollection dataCollection);
 }

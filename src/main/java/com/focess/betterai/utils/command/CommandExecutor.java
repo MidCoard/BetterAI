@@ -1,9 +1,11 @@
 package com.focess.betterai.utils.command;
 
+import com.google.common.collect.Maps;
 import org.bukkit.command.CommandSender;
 
-public interface CommandExecutor {
+import java.util.Map;
 
-    void execute(CommandSender sender, String[] args);
+public interface CommandExecutor {
+    CommandResult execute(CommandSender sender, DataCollection dataCollection);
 
 }

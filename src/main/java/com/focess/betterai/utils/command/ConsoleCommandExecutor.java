@@ -6,16 +6,12 @@ import org.bukkit.command.ConsoleCommandSender;
 public interface ConsoleCommandExecutor extends CommandExecutor {
 
     @Override
-    default void execute(final CommandSender sender, final String[] args) {
+    default CommandResult execute(final CommandSender sender, DataCollection dataCollection) {
         if (sender instanceof ConsoleCommandSender)
-            this.execute((ConsoleCommandSender) sender, args);
-        else
-            this.executeError(sender, args);
+            return this.execute((ConsoleCommandSender) sender, dataCollection);
+        return CommandResult.REFUSE;
     }
 
-    void execute(ConsoleCommandSender sender, String[] args);
-
-    default void executeError(final CommandSender sender, final String[] args) {
-    }
+    CommandResult execute(ConsoleCommandSender sender,DataCollection dataCollection);
 
 }

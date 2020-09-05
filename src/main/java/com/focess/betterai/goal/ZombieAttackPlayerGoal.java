@@ -15,6 +15,7 @@ public class ZombieAttackPlayerGoal extends Goal {
 
     public ZombieAttackPlayerGoal(Zombie zombie) {
         this.zombie = EntityManager.getFocessEntity(zombie);
+        this.addControl(Control.LOOK);
     }
 
     private static boolean isPlayer(Entity entity) {
